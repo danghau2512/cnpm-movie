@@ -1,38 +1,151 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineBook - Kết quả thanh toán</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+
+    <style>
+        .result-page {
+            padding: 3rem 6%;
+            display: grid;
+            place-items: center;
+        }
+
+        .result-card {
+            max-width: 620px;
+            width: 100%;
+            padding: 2rem;
+            border: 1px solid var(--line);
+            border-radius: 0.9rem;
+            background: rgba(21, 21, 29, 0.92);
+            text-align: center;
+        }
+
+        .result-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 1rem;
+            background: var(--gold);
+            color: #211307;
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        .ticket-info {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border: 1px dashed rgba(240, 184, 74, 0.55);
+            border-radius: 0.7rem;
+            text-align: left;
+        }
+
+        .ticket-info p {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            color: var(--muted);
+        }
+
+        .ticket-info strong {
+            color: var(--text);
+            text-align: right;
+        }
+
+        .result-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+    </style>
 </head>
+
 <body data-page="payment-result">
-    <header class="site-header">
-        <a class="logo" href="index.jsp">Cine<span>Book</span></a>
-        <button class="menu-toggle" aria-label="Mở trình đơn">Trình đơn</button>
-        <nav class="main-nav">
-            <a href="index.jsp">Trang chủ</a>
-            <a href="movies.jsp">Phim</a>
-            <a href="showtimes.jsp">Lịch chiếu</a>
-            <a href="booking.jsp">Đặt vé</a>
-        </nav>
-        <div class="header-actions">
-            <a class="btn btn-ghost" href="login.jsp">Đăng nhập</a>
-            <a class="btn btn-primary" href="register.jsp">Đăng ký</a>
+
+<jsp:include page="/header.jsp" />
+
+<main class="result-page">
+    <section class="result-card">
+        <c:choose>
+            <c:when test="${paymentInfo.paymentStatus == 'PAID'}">
+                <div class="result-icon">✓</div>
+                <h1>Thanh toán thành công</h1>
+                <p class="muted">
+                    Vé của bạn đã được xác nhận. Vui lòng kiểm tra thông tin bên dưới.
+                </p>
+            </c:when>
+
+            <c:otherwise>
+                <div class="result-icon">!</div>
+                <h1>Đặt vé thành công</h1>
+                <p class="muted">
+                    Vé đang được giữ tạm thời. Vui lòng thanh toán tại quầy trước khi xem phim.
+                </p>
+            </c:otherwise>
+        </c:choose>
+
+        <div class="ticket-info">
+            <p>
+                <span>Mã đặt vé</span>
+                <strong>${paymentInfo.bookingCode}</strong>
+            </p>
+
+            <p>
+                <span>Phim</span>
+                <strong>${paymentInfo.movieTitle}</strong>
+            </p>
+
+            <p>
+                <span>Suất chiếu</span>
+                <strong>${paymentInfo.showDate} - ${paymentInfo.showTime}</strong>
+            </p>
+
+            <p>
+                <span>Phòng</span>
+                <strong>${paymentInfo.roomName}</strong>
+            </p>
+
+            <p>
+                <span>Ghế</span>
+                <strong>${paymentInfo.seats}</strong>
+            </p>
+
+            <p>
+                <span>Tổng tiền</span>
+                <strong>${paymentInfo.totalText} VNĐ</strong>
+            </p>
+
+            <p>
+                <span>Trạng thái đặt vé</span>
+                <strong>${paymentInfo.bookingStatus}</strong>
+            </p>
+
+            <p>
+                <span>Trạng thái thanh toán</span>
+                <strong>${paymentInfo.paymentStatus}</strong>
+            </p>
         </div>
-    </header>
 
-    <main class="result-page">
-        <section class="result-card">
-            <div class="success-mark">Xong</div>
-            <p class="eyebrow">Thanh toán thành công</p>
-            <h1>Vé của bạn đã sẵn sàng</h1>
-            <div id="ticketDetails" class="ticket-details"></div>
-            <a class="btn btn-primary" href="index.jsp">Về trang chủ</a>
-        </section>
-    </main>
+        <div class="result-actions">
+            <a class="btn btn-primary" href="${pageContext.request.contextPath}/home">
+                Về trang chủ
+            </a>
 
-    <script src="js/main.js"></script>
+            <a class="btn btn-ghost" href="${pageContext.request.contextPath}/movies">
+                Xem phim khác
+            </a>
+        </div>
+    </section>
+</main>
+
+<jsp:include page="/footer.jsp" />
+
 </body>
 </html>

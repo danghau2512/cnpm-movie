@@ -42,11 +42,13 @@ public class BookingDAO {
             }
 
             Integer bookedCount = handle.createQuery("""
-                            SELECT COUNT(*)
-                            FROM booking_seats
-                            WHERE showtime_id = :showtimeId
-                            AND seat_id IN (<seatIds>)
-                            """)
+                SELECT COUNT(*)
+                FROM booking_seats bs
+                JOIN bookings b ON bs.booking_id = b.id
+                WHERE bs.showtime_id = :showtimeId
+                AND bs.seat_id IN (<seatIds>)
+                AND b.booking_status IN ('PENDING', 'CONFIRMED')
+                """)
                     .bind("showtimeId", showtimeId)
                     .bindList("seatIds", seatIds)
                     .mapTo(Integer.class)
@@ -61,13 +63,13 @@ public class BookingDAO {
             long totalAmount = price * quantity;
 
             int bookingId = handle.createUpdate("""
-                            INSERT INTO bookings
-                            (user_id, showtime_id, booking_code, quantity, total_amount,
-                             booking_status, payment_status)
-                            VALUES
-                            (:userId, :showtimeId, :bookingCode, :quantity, :totalAmount,
-                             'PENDING', 'UNPAID')
-                            """)
+                INSERT INTO bookings
+                (user_id, showtime_id, booking_code, quantity, total_amount,
+                 booking_status, payment_status)
+                VALUES
+                (:userId, :showtimeId, :bookingCode, :quantity, :totalAmount,
+                 'PENDING', 'UNPAID')
+                """)
                     .bind("userId", userId)
                     .bind("showtimeId", showtimeId)
                     .bind("bookingCode", bookingCode)
@@ -93,5 +95,33 @@ public class BookingDAO {
 
             return bookingId;
         });
+    }
+    public void confirmBooking(int bookingId) {
+        String sql = """
+            UPDATE bookings
+            SET booking_status = 'CONFIRMED',
+                payment_status = 'PAID'
+            WHERE id = :bookingId
+            """;
+
+        jdbi.useHandle(handle ->
+                handle.createUpdate(sql)
+                        .bind("bookingId", bookingId)
+                        .execute()
+        );
+    }
+    public void cancelBooking(int bookingId) {
+        String sql = """
+            UPDATE bookings
+            SET booking_status = 'CANCELLED',
+                payment_status = 'FAILED'
+            WHERE id = :bookingId
+            """;
+
+        jdbi.useHandle(handle ->
+                handle.createUpdate(sql)
+                        .bind("bookingId", bookingId)
+                        .execute()
+        );
     }
 }
