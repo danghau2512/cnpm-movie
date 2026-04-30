@@ -15,4 +15,7 @@ public class MovieService {
 
         return movieDAO.searchMovies(keyword.trim());
     }
+    public Movie getMovieDetail(int id) {
+        return movieDAO.findById(id);
+    }
 }

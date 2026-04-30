@@ -11,8 +11,16 @@ public class Movie {
     private String trailerUrl;
     private String releaseDate;
     private String status;
+    private String genreNames;
 
     public Movie() {
+    }
+    public String getGenreNames() {
+        return genreNames;
+    }
+
+    public void setGenreNames(String genreNames) {
+        this.genreNames = genreNames;
     }
 
     public int getId() {

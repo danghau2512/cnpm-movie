@@ -21,6 +21,16 @@
         <p class="muted">
             Người dùng có thể xem danh sách phim đang chiếu và tìm kiếm phim theo tên.
         </p>
+        <label>Thể loại
+            <select id="genreFilter">
+                <option value="">Tất cả thể loại</option>
+            </select>
+        </label>
+        <label>Độ tuổi
+            <select id="ratingFilter">
+                <option value="">Tất cả độ tuổi</option>
+            </select>
+        </label>
     </section>
 
 
@@ -57,6 +67,7 @@
                             <p>
                                 Độ tuổi: ${movie.ageRating}
                             </p>
+                            <p>Thể loại : ${movie.genreNames}</p>
 
                             <p>
                                     ${movie.shortDescription}

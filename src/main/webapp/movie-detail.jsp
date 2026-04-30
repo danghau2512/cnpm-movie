@@ -1,32 +1,89 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineBook - Chi tiết phim</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
+
 <body data-page="movie-detail">
-    <header class="site-header">
-        <a class="logo" href="index.jsp">Cine<span>Book</span></a>
-        <button class="menu-toggle" aria-label="Mở trình đơn">Trình đơn</button>
-        <nav class="main-nav">
-            <a href="index.jsp">Trang chủ</a>
-            <a href="movies.jsp" class="active">Phim</a>
-            <a href="showtimes.jsp">Lịch chiếu</a>
-            <a href="booking.jsp">Đặt vé</a>
-        </nav>
-        <div class="header-actions">
-            <a class="btn btn-ghost" href="login.jsp">Đăng nhập</a>
-            <a class="btn btn-primary" href="register.jsp">Đăng ký</a>
+
+<jsp:include page="/header.jsp" />
+
+<main class="page-shell">
+    <section class="page-title">
+        <p class="eyebrow">UC04 - Xem chi tiết phim</p>
+        <h1>${movie.title}</h1>
+        <p class="muted">
+            Xem thông tin chi tiết của phim trước khi chọn lịch chiếu và đặt vé.
+        </p>
+    </section>
+
+    <section class="detail-layout">
+        <div class="detail-poster movie-detail-poster">
+            <c:choose>
+                <c:when test="${not empty movie.posterUrl}">
+                    <img src="${movie.posterUrl}" alt="${movie.title}">
+                </c:when>
+
+                <c:otherwise>
+                    <div class="poster-placeholder">
+                        <span>${movie.ageRating}</span>
+                        <h2>${movie.title}</h2>
+                    </div>
+                </c:otherwise>
+            </c:choose>
         </div>
-    </header>
 
-    <main class="page-shell">
-        <section id="movieDetail" class="detail-layout"></section>
-    </main>
+        <div class="detail-content">
+            <h2>${movie.title}</h2>
 
-    <script src="js/main.js"></script>
+            <div class="meta detail-meta">
+                <span>${movie.durationMinutes} phút</span>
+                <span>${movie.ageRating}</span>
+                <span>${movie.genreNames}</span>
+                <c:if test="${not empty movie.releaseDate}">
+                    <span>Khởi chiếu: ${movie.releaseDate}</span>
+                </c:if>
+            </div>
+
+            <h3>Mô tả ngắn</h3>
+            <p class="muted">
+                ${movie.shortDescription}
+            </p>
+
+            <h3>Nội dung phim</h3>
+            <p class="muted movie-description">
+                ${movie.description}
+            </p>
+
+            <div class="detail-actions">
+                <a class="btn btn-primary"
+                   href="${pageContext.request.contextPath}/showtimes?movieId=${movie.id}">
+                    Xem lịch chiếu
+                </a>
+
+                <a class="btn btn-ghost"
+                   href="${pageContext.request.contextPath}/movies">
+                    Quay lại danh sách
+                </a>
+
+                <c:if test="${not empty movie.trailerUrl}">
+                    <a class="btn btn-secondary"
+                       href="${movie.trailerUrl}"
+                       target="_blank">
+                        Xem trailer
+                    </a>
+                </c:if>
+            </div>
+        </div>
+    </section>
+</main>
+
+<jsp:include page="/footer.jsp" />
+
 </body>
 </html>

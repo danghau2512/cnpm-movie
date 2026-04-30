@@ -16,7 +16,6 @@
         <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
         <a href="${pageContext.request.contextPath}/movies">Phim</a>
         <a href="${pageContext.request.contextPath}/showtimes">Lịch chiếu</a>
-        <a href="${pageContext.request.contextPath}/booking">Đặt vé</a>
     </nav>
 
 

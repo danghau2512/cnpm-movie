@@ -12,21 +12,30 @@ public class MovieDAO {
 
     public List<Movie> findAllNowShowing() {
         String sql = """
+            SELECT 
+                m.id,
+                m.title,
+                m.duration_minutes AS durationMinutes,
+                m.age_rating AS ageRating,
+                m.short_description AS shortDescription,
+                m.description,
+                m.poster_url AS posterUrl,
+                m.trailer_url AS trailerUrl,
+                DATE_FORMAT(m.release_date, '%Y-%m-%d') AS releaseDate,
+                m.status,
+                COALESCE(gd.genreNames, 'Chưa phân loại') AS genreNames
+            FROM movies m
+            LEFT JOIN (
                 SELECT 
-                    id,
-                    title,
-                    duration_minutes AS durationMinutes,
-                    age_rating AS ageRating,
-                    short_description AS shortDescription,
-                    description,
-                    poster_url AS posterUrl,
-                    trailer_url AS trailerUrl,
-                    DATE_FORMAT(release_date, '%Y-%m-%d') AS releaseDate,
-                    status
-                FROM movies
-                WHERE status = 'NOW_SHOWING'
-                ORDER BY id DESC
-                """;
+                    mg.movie_id,
+                    GROUP_CONCAT(g.name ORDER BY g.name SEPARATOR ', ') AS genreNames
+                FROM movie_genres mg
+                JOIN genres g ON mg.genre_id = g.id
+                GROUP BY mg.movie_id
+            ) gd ON m.id = gd.movie_id
+            WHERE m.status = 'NOW_SHOWING'
+            ORDER BY m.id DESC
+            """;
 
         return jdbi.withHandle(handle ->
                 handle.createQuery(sql)
@@ -35,25 +44,33 @@ public class MovieDAO {
                         .list()
         );
     }
-
     public List<Movie> searchMovies(String keyword) {
         String sql = """
+            SELECT 
+                m.id,
+                m.title,
+                m.duration_minutes AS durationMinutes,
+                m.age_rating AS ageRating,
+                m.short_description AS shortDescription,
+                m.description,
+                m.poster_url AS posterUrl,
+                m.trailer_url AS trailerUrl,
+                DATE_FORMAT(m.release_date, '%Y-%m-%d') AS releaseDate,
+                m.status,
+                COALESCE(gd.genreNames, 'Chưa phân loại') AS genreNames
+            FROM movies m
+            LEFT JOIN (
                 SELECT 
-                    id,
-                    title,
-                    duration_minutes AS durationMinutes,
-                    age_rating AS ageRating,
-                    short_description AS shortDescription,
-                    description,
-                    poster_url AS posterUrl,
-                    trailer_url AS trailerUrl,
-                    DATE_FORMAT(release_date, '%Y-%m-%d') AS releaseDate,
-                    status
-                FROM movies
-                WHERE status = 'NOW_SHOWING'
-                AND title LIKE :keyword
-                ORDER BY id DESC
-                """;
+                    mg.movie_id,
+                    GROUP_CONCAT(g.name ORDER BY g.name SEPARATOR ', ') AS genreNames
+                FROM movie_genres mg
+                JOIN genres g ON mg.genre_id = g.id
+                GROUP BY mg.movie_id
+            ) gd ON m.id = gd.movie_id
+            WHERE m.status = 'NOW_SHOWING'
+            AND m.title LIKE :keyword
+            ORDER BY m.id DESC
+            """;
 
         return jdbi.withHandle(handle ->
                 handle.createQuery(sql)
@@ -63,4 +80,40 @@ public class MovieDAO {
                         .list()
         );
     }
+    public Movie findById(int id) {
+        String sql = """
+            SELECT 
+                m.id,
+                m.title,
+                m.duration_minutes AS durationMinutes,
+                m.age_rating AS ageRating,
+                m.short_description AS shortDescription,
+                m.description,
+                m.poster_url AS posterUrl,
+                m.trailer_url AS trailerUrl,
+                DATE_FORMAT(m.release_date, '%Y-%m-%d') AS releaseDate,
+                m.status,
+                COALESCE(gd.genreNames, 'Chưa phân loại') AS genreNames
+            FROM movies m
+            LEFT JOIN (
+                SELECT 
+                    mg.movie_id,
+                    GROUP_CONCAT(g.name ORDER BY g.name SEPARATOR ', ') AS genreNames
+                FROM movie_genres mg
+                JOIN genres g ON mg.genre_id = g.id
+                GROUP BY mg.movie_id
+            ) gd ON m.id = gd.movie_id
+            WHERE m.id = :id
+            """;
+
+        return jdbi.withHandle(handle ->
+                handle.createQuery(sql)
+                        .bind("id", id)
+                        .registerRowMapper(BeanMapper.factory(Movie.class))
+                        .mapTo(Movie.class)
+                        .findOne()
+                        .orElse(null)
+        );
+    }
+
 }
