@@ -10,7 +10,58 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <link rel="stylesheet" href="css/movie.css">
 </head>
+<style>
+    .movie-poster {
+        height: 260px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 0.45rem;
+        background: linear-gradient(135deg, #2b1010, #15151d);
+    }
 
+    .movie-poster-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 0.45rem;
+    }
+
+    .movie-poster::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.75));
+        pointer-events: none;
+    }
+
+    .age-tag {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 2;
+        background: #f5c542;
+        color: #111827;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-weight: 800;
+    }
+
+    .poster-placeholder {
+        height: 100%;
+        padding: 18px;
+        display: flex;
+        align-items: flex-end;
+        background: linear-gradient(135deg, #4c0519, #b91c1c 45%, #f59e0b);
+    }
+
+    .poster-placeholder h3 {
+        position: relative;
+        z-index: 2;
+        color: #ffffff;
+        font-size: 22px;
+    }
+</style>
 <body data-page="movies">
 
 <jsp:include page="/header.jsp" />
@@ -50,13 +101,21 @@
             <c:otherwise>
                 <c:forEach var="movie" items="${movies}">
                     <div class="movie-card">
-                        <div class="movie-poster"
-                             style="--poster-bg: linear-gradient(135deg, #1b0b0b, #8a2e16, #d67a28);">
+                        <div class="movie-poster">
                             <span class="age-tag">${movie.ageRating}</span>
 
-                            <h3>${movie.title}</h3>
-                        </div>
+                            <c:choose>
+                                <c:when test="${not empty movie.posterUrl}">
+                                    <img src="${movie.posterUrl}" alt="${movie.title}" class="movie-poster-img">
+                                </c:when>
 
+                                <c:otherwise>
+                                    <div class="poster-placeholder">
+                                        <h3>${movie.title}</h3>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                         <div class="movie-info">
                             <h3>${movie.title}</h3>
 
@@ -68,10 +127,6 @@
                                 Độ tuổi: ${movie.ageRating}
                             </p>
                             <p>Thể loại : ${movie.genreNames}</p>
-
-                            <p>
-                                    ${movie.shortDescription}
-                            </p>
 
                             <div class="movie-actions">
                                 <a class="btn btn-ghost"

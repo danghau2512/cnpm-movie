@@ -21,7 +21,7 @@ public class MovieDAO {
                 m.description,
                 m.poster_url AS posterUrl,
                 m.trailer_url AS trailerUrl,
-                DATE_FORMAT(m.release_date, '%Y-%m-%d') AS releaseDate,
+                DATE_FORMAT(m.release_date, '%d/%m/%Y') AS releaseDate,
                 m.status,
                 COALESCE(gd.genreNames, 'Chưa phân loại') AS genreNames
             FROM movies m
@@ -55,7 +55,7 @@ public class MovieDAO {
                 m.description,
                 m.poster_url AS posterUrl,
                 m.trailer_url AS trailerUrl,
-                DATE_FORMAT(m.release_date, '%Y-%m-%d') AS releaseDate,
+                DATE_FORMAT(m.release_date, '%d/%m/%Y') AS releaseDate,
                 m.status,
                 COALESCE(gd.genreNames, 'Chưa phân loại') AS genreNames
             FROM movies m
@@ -91,7 +91,7 @@ public class MovieDAO {
                 m.description,
                 m.poster_url AS posterUrl,
                 m.trailer_url AS trailerUrl,
-                DATE_FORMAT(m.release_date, '%Y-%m-%d') AS releaseDate,
+                DATE_FORMAT(m.release_date, '%d/%m/%Y') AS releaseDate,
                 m.status,
                 COALESCE(gd.genreNames, 'Chưa phân loại') AS genreNames
             FROM movies m

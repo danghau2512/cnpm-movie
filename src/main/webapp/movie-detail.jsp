@@ -55,6 +55,85 @@
         font-weight: 700;
         cursor: pointer;
     }
+    body[data-page="movie-detail"] .page-title h1 {
+        font-size: clamp(2.2rem, 4vw, 4rem);
+        line-height: 1.15;
+        max-width: 1200px;
+        margin-bottom: 1rem;
+    }
+
+    body[data-page="movie-detail"] .detail-layout {
+        display: grid;
+        grid-template-columns: 360px minmax(0, 1fr);
+        gap: 3rem;
+        align-items: start;
+    }
+
+    body[data-page="movie-detail"] .detail-poster {
+        width: 100%;
+        max-width: 360px;
+        min-height: auto;
+        border-radius: 0.6rem;
+        overflow: hidden;
+    }
+
+    body[data-page="movie-detail"] .movie-detail-poster img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 2 / 3;
+        object-fit: cover;
+        display: block;
+        border-radius: 0.6rem;
+    }
+
+    body[data-page="movie-detail"] .detail-content {
+        width: 100%;
+        min-width: 0;
+        padding: 2rem;
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+
+    body[data-page="movie-detail"] .detail-content h2 {
+        font-size: clamp(1.8rem, 2.6vw, 2.6rem);
+        line-height: 1.25;
+        margin-bottom: 1rem;
+        word-break: break-word;
+    }
+
+    body[data-page="movie-detail"] .detail-content p {
+        max-width: 100%;
+        line-height: 1.6;
+        word-break: normal;
+        overflow-wrap: break-word;
+    }
+
+    body[data-page="movie-detail"] .movie-description {
+        max-width: 100%;
+        overflow-wrap: break-word;
+    }
+
+    body[data-page="movie-detail"] .detail-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-top: 1.6rem;
+    }
+
+    @media (max-width: 950px) {
+        body[data-page="movie-detail"] .detail-layout {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        body[data-page="movie-detail"] .detail-poster {
+            max-width: 320px;
+        }
+
+        body[data-page="movie-detail"] .page-title h1 {
+            font-size: clamp(2rem, 8vw, 3rem);
+        }
+    }
 </style>
 <body data-page="movie-detail">
 
