@@ -129,4 +129,90 @@ public class PaymentDAO {
                     .execute();
         });
     }
+    public void createVnpayPendingPayment(int bookingId) {
+        jdbi.useTransaction(handle -> {
+            java.math.BigDecimal amount = handle.createQuery("""
+                        SELECT total_amount
+                        FROM bookings
+                        WHERE id = :bookingId
+                        """)
+                    .bind("bookingId", bookingId)
+                    .mapTo(java.math.BigDecimal.class)
+                    .one();
+
+            handle.createUpdate("""
+                        DELETE FROM payments
+                        WHERE booking_id = :bookingId
+                        """)
+                    .bind("bookingId", bookingId)
+                    .execute();
+
+            handle.createUpdate("""
+                        INSERT INTO payments
+                        (booking_id, payment_method, amount, payment_status, paid_at, transaction_code)
+                        VALUES
+                        (:bookingId, 'VNPAY', :amount, 'PENDING', NULL, NULL)
+                        """)
+                    .bind("bookingId", bookingId)
+                    .bind("amount", amount)
+                    .execute();
+
+            handle.createUpdate("""
+                        UPDATE bookings
+                        SET booking_status = 'PENDING',
+                            payment_status = 'UNPAID'
+                        WHERE id = :bookingId
+                        """)
+                    .bind("bookingId", bookingId)
+                    .execute();
+        });
+    }
+
+    public void confirmVnpayPayment(int bookingId, String transactionCode) {
+        jdbi.useTransaction(handle -> {
+            handle.createUpdate("""
+                        UPDATE payments
+                        SET payment_status = 'SUCCESS',
+                            paid_at = NOW(),
+                            transaction_code = :transactionCode
+                        WHERE booking_id = :bookingId
+                        """)
+                    .bind("bookingId", bookingId)
+                    .bind("transactionCode", transactionCode)
+                    .execute();
+
+            handle.createUpdate("""
+                        UPDATE bookings
+                        SET booking_status = 'CONFIRMED',
+                            payment_status = 'PAID'
+                        WHERE id = :bookingId
+                        """)
+                    .bind("bookingId", bookingId)
+                    .execute();
+        });
+    }
+
+    public void failVnpayPayment(int bookingId, String transactionCode) {
+        jdbi.useTransaction(handle -> {
+            handle.createUpdate("""
+                        UPDATE payments
+                        SET payment_status = 'FAILED',
+                            paid_at = NULL,
+                            transaction_code = :transactionCode
+                        WHERE booking_id = :bookingId
+                        """)
+                    .bind("bookingId", bookingId)
+                    .bind("transactionCode", transactionCode)
+                    .execute();
+
+            handle.createUpdate("""
+                        UPDATE bookings
+                        SET booking_status = 'CANCELLED',
+                            payment_status = 'FAILED'
+                        WHERE id = :bookingId
+                        """)
+                    .bind("bookingId", bookingId)
+                    .execute();
+        });
+    }
 }

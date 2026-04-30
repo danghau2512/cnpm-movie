@@ -6,8 +6,12 @@
     </a>
 
     <form class="header-search" action="${pageContext.request.contextPath}/movies" method="get">
-        <input type="search" name="keyword" placeholder="Tìm kiếm phim..." aria-label="Tìm kiếm phim">
-        <button class="search-btn" type="submit">Tìm</button>
+        <input
+                type="search"
+                name="keyword"
+                placeholder="Tìm kiếm phim..."
+                value="${param.keyword}">
+        <button type="submit" class="search-btn">Tìm</button>
     </form>
 
     <button class="menu-toggle" aria-label="Mở trình đơn">Trình đơn</button>

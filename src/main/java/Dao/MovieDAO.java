@@ -68,7 +68,10 @@ public class MovieDAO {
                 GROUP BY mg.movie_id
             ) gd ON m.id = gd.movie_id
             WHERE m.status = 'NOW_SHOWING'
-            AND m.title LIKE :keyword
+            AND (
+                m.title LIKE :keyword
+                OR gd.genreNames LIKE :keyword
+            )
             ORDER BY m.id DESC
             """;
 

@@ -25,10 +25,39 @@
 
     .hero {
         padding: 90px 100px;
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .hero::before {
+        content: "";
+        position: absolute;
+        inset: -12px;
+        z-index: -2;
+        background-image: url("${pageContext.request.contextPath}/images/banner-home.jpg");
+        background-size: cover;
+        background-position: center right;
+        opacity: 0.58;
+        filter: blur(3px);
+        transform: scale(1.03);
+    }
+
+    .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+            linear-gradient(90deg, rgba(8, 7, 12, 0.98) 0%, rgba(8, 7, 12, 0.86) 36%, rgba(8, 7, 12, 0.36) 72%, rgba(8, 7, 12, 0.12) 100%),
+            linear-gradient(180deg, rgba(8, 7, 12, 0.2), rgba(8, 7, 12, 0.64));
     }
 
     .hero-content {
         max-width: 720px;
+        position: relative;
+        z-index: 1;
     }
 
     .hero h1 {

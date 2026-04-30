@@ -61,6 +61,28 @@
         color: #ffffff;
         font-size: 22px;
     }
+
+    .page-title {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 18px;
+        row-gap: 10px;
+    }
+
+    .page-title h1,
+    .page-title p {
+        grid-column: 1 / -1;
+    }
+
+    .page-title label {
+        min-width: 0;
+    }
+
+    @media (max-width: 700px) {
+        .page-title {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 <body data-page="movies">
 
@@ -90,7 +112,7 @@
         Có ${movies.size()} phim được hiển thị.
     </p>
 
-    <div class="movie-grid">
+    <div class="movie-grid" id="movieList">
         <c:choose>
             <c:when test="${empty movies}">
                 <p class="empty-message">
@@ -100,7 +122,7 @@
 
             <c:otherwise>
                 <c:forEach var="movie" items="${movies}">
-                    <div class="movie-card">
+                    <div class="movie-card" data-movie-card data-genre="${movie.genreNames}" data-rating="${movie.ageRating}">
                         <div class="movie-poster">
                             <span class="age-tag">${movie.ageRating}</span>
 
@@ -144,10 +166,83 @@
                 </c:forEach>
             </c:otherwise>
         </c:choose>
+
+        <p class="empty-message hidden" id="noFilteredMovies">
+            KhÃ´ng cÃ³ phim phÃ¹ há»£p vá»›i bá»™ lá»c Ä‘ang chá»n.
+        </p>
     </div>
 </main>
 
 <jsp:include page="/footer.jsp" />
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var genreFilter = document.getElementById("genreFilter");
+        var ratingFilter = document.getElementById("ratingFilter");
+        var movieCount = document.querySelector(".movie-count");
+        var noFilteredMovies = document.getElementById("noFilteredMovies");
+        var movieCards = Array.prototype.slice.call(document.querySelectorAll("[data-movie-card]"));
+
+        if (!genreFilter || !ratingFilter || !movieCount) {
+            return;
+        }
+
+        function getGenres(card) {
+            return (card.dataset.genre || "")
+                .split(",")
+                .map(function (genre) {
+                    return genre.trim();
+                })
+                .filter(Boolean);
+        }
+
+        function addOptions(select, values) {
+            values
+                .filter(function (value, index, array) {
+                    return value && array.indexOf(value) === index;
+                })
+                .sort(function (first, second) {
+                    return first.localeCompare(second, "vi");
+                })
+                .forEach(function (value) {
+                    var option = document.createElement("option");
+                    option.value = value;
+                    option.textContent = value;
+                    select.appendChild(option);
+                });
+        }
+
+        addOptions(genreFilter, movieCards.flatMap(getGenres));
+        addOptions(ratingFilter, movieCards.map(function (card) {
+            return card.dataset.rating || "";
+        }));
+
+        function filterMovies() {
+            var selectedGenre = genreFilter.value;
+            var selectedRating = ratingFilter.value;
+            var visibleCount = 0;
+
+            movieCards.forEach(function (card) {
+                var matchesGenre = !selectedGenre || getGenres(card).indexOf(selectedGenre) !== -1;
+                var matchesRating = !selectedRating || card.dataset.rating === selectedRating;
+                var isVisible = matchesGenre && matchesRating;
+
+                card.classList.toggle("hidden", !isVisible);
+                if (isVisible) {
+                    visibleCount += 1;
+                }
+            });
+
+            movieCount.textContent = "CÃ³ " + visibleCount + " phim Ä‘Æ°á»£c hiá»ƒn thá»‹.";
+            if (noFilteredMovies) {
+                noFilteredMovies.classList.toggle("hidden", visibleCount > 0);
+            }
+        }
+
+        genreFilter.addEventListener("change", filterMovies);
+        ratingFilter.addEventListener("change", filterMovies);
+    });
+</script>
 
 </body>
 </html>
