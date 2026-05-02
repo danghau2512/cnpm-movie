@@ -60,16 +60,45 @@
         z-index: 1;
     }
 
+    .home-page .hero {
+        font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    }
+
     .hero h1 {
-        font-size: 56px;
-        line-height: 1.1;
-        margin: 16px 0;
+        max-width: 760px;
+        font-size: clamp(42px, 5vw, 62px);
+        line-height: 1.08;
+        font-weight: 800;
+        margin: 16px 0 20px;
+    }
+
+    .hero .eyebrow {
+        font-size: 15px;
+        line-height: 1.45;
+        font-weight: 800;
+        color: #f5c542;
     }
 
     .hero p {
+        max-width: 760px;
         color: #d1d5db;
         font-size: 18px;
-        line-height: 1.7;
+        line-height: 1.75;
+        font-weight: 400;
+    }
+
+    @media (max-width: 700px) {
+        .hero {
+            padding: 56px 24px;
+        }
+
+        .hero h1 {
+            font-size: clamp(34px, 10vw, 44px);
+        }
+
+        .hero p {
+            font-size: 16px;
+        }
     }
 
     .hero-actions {

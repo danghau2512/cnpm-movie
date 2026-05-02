@@ -25,7 +25,7 @@ public class PaymentService {
         PaymentInfo info = paymentDAO.findPaymentInfo(bookingId);
 
         if (info == null) {
-            throw new RuntimeException("Không tìm thấy thông tin đặt vé.");
+            throw new RuntimeException("KhÃ´ng tÃ¬m tháº¥y thÃ´ng tin Ä‘áº·t vÃ©.");
         }
 
         paymentDAO.createVnpayPendingPayment(bookingId);
@@ -40,14 +40,14 @@ public class PaymentService {
         BigDecimal totalAmount = info.getTotalAmount();
 
         long amount = totalAmount.longValue() * 100;
-
+        String vnpTxnRef = bookingId + "_" + System.currentTimeMillis();
         Map<String, String> params = new HashMap<>();
         params.put("vnp_Version", VnpayConfig.VNP_VERSION);
         params.put("vnp_Command", VnpayConfig.VNP_COMMAND);
         params.put("vnp_TmnCode", VnpayConfig.VNP_TMN_CODE);
         params.put("vnp_Amount", String.valueOf(amount));
         params.put("vnp_CurrCode", VnpayConfig.VNP_CURR_CODE);
-        params.put("vnp_TxnRef", String.valueOf(bookingId));
+        params.put("vnp_TxnRef", vnpTxnRef);
         params.put("vnp_OrderInfo", "Thanh toan ve xem phim " + info.getBookingCode());
         params.put("vnp_OrderType", VnpayConfig.VNP_ORDER_TYPE);
         params.put("vnp_Locale", VnpayConfig.VNP_LOCALE);
@@ -62,10 +62,11 @@ public class PaymentService {
         boolean validSignature = VnpayUtil.verifyReturnUrl(params);
 
         if (!validSignature) {
-            throw new RuntimeException("Sai chữ ký VNPay.");
+            throw new RuntimeException("Sai chá»¯ kÃ½ VNPay.");
         }
 
-        int bookingId = Integer.parseInt(params.get("vnp_TxnRef"));
+        String txnRef = params.get("vnp_TxnRef");
+        int bookingId = Integer.parseInt(txnRef.split("_")[0]);
         String responseCode = params.get("vnp_ResponseCode");
         String transactionStatus = params.get("vnp_TransactionStatus");
         String transactionCode = params.get("vnp_TransactionNo");
