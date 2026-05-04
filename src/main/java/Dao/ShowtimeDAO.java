@@ -67,6 +67,7 @@ public class ShowtimeDAO {
                         .list()
         );
     }
+    // UC06 - 6.1.3: Truy vấn thông tin suất chiếu theo showtimeId.
     public Showtime findById(int showtimeId) {
         String sql = """
             SELECT
