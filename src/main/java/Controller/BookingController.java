@@ -46,6 +46,7 @@ public class BookingController extends HttpServlet {
         }
 
         try {
+            // UC07 - 7.1.0: Sau khi tạo booking thành công, chuyển sang chức năng thanh toán với bookingId
             int bookingId = bookingService.createBooking(currentUser.getId(), showtimeId, seatIds);
 
             response.sendRedirect(request.getContextPath() + "/payment?bookingId=" + bookingId);

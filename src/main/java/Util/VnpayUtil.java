@@ -43,7 +43,7 @@ public class VnpayUtil {
 
         return ip;
     }
-
+    // UC07 - 7.1.9: Ký dữ liệu request và tạo URL thanh toán VNPay Sandbox
     public static String buildPaymentUrl(Map<String, String> params) {
         List<String> fieldNames = new ArrayList<>(params.keySet());
         Collections.sort(fieldNames);
@@ -74,7 +74,7 @@ public class VnpayUtil {
 
         return VnpayConfig.VNP_PAY_URL + "?" + query + "&vnp_SecureHash=" + secureHash;
     }
-
+    // UC07 - 7.1.11: Kiểm tra chữ ký dữ liệu callback trả về từ VNPay Sandbox
     public static boolean verifyReturnUrl(Map<String, String> params) {
         String vnpSecureHash = params.get("vnp_SecureHash");
 
