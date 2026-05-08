@@ -202,6 +202,11 @@
         </div>
     </c:if>
 
+    <%--
+    UC06 - Đặt vé
+    UC06 - 6.1.6: Hiển thị giao diện chọn ghế cho khách hàng.
+    UC06 - 6.1.8: Khi khách hàng xác nhận, form gửi showtimeId và seatIds về BookingController.
+--%>
     <form action="${pageContext.request.contextPath}/booking" method="post" id="bookingForm">
         <input type="hidden" name="showtimeId" value="${showtime.id}">
 
@@ -218,6 +223,10 @@
                 <div class="screen">Màn hình</div>
 
                 <div class="seat-grid">
+                    <%--
+                        UC06 - 6.1.7: Khách hàng chọn một hoặc nhiều ghế còn trống.
+                        Ghế đã được đặt sẽ bị disabled và không thể chọn.
+                    --%>
                     <c:forEach var="seat" items="${seats}">
                         <label class="seat-item ${seat.booked ? 'booked' : 'available'}">
                             <input type="checkbox"
