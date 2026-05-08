@@ -74,6 +74,9 @@
 <main class="result-page">
     <section class="result-card">
         <c:choose>
+            <%-- UC07 - 7.1.12: Hiển thị kết quả thanh toán thành công khi booking.payment_status = PAID --%>
+
+            <%-- UC07 - 7.2.10: Hiển thị kết quả giữ vé và thanh toán tại quầy khi booking.payment_status = UNPAID --%>
             <c:when test="${paymentInfo.paymentStatus == 'PAID'}">
                 <div class="result-icon">✓</div>
                 <h1>Thanh toán thành công</h1>

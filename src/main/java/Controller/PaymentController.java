@@ -25,7 +25,7 @@ public class PaymentController extends HttpServlet {
             handleVnpayReturn(request, response);
             return;
         }
-
+// UC07 - 7.1.1: Kiểm tra khách hàng đã đăng nhập trước khi truy cập chức năng thanh toán
         User currentUser = (User) request.getSession().getAttribute("currentUser");
 
         if (currentUser == null) {
@@ -34,7 +34,7 @@ public class PaymentController extends HttpServlet {
         }
 
         int bookingId = Integer.parseInt(request.getParameter("bookingId"));
-
+// UC07 - 7.1.2 + 7.1.4: Lấy thông tin thanh toán của booking và kiểm tra quyền sở hữu đơn
         PaymentInfo paymentInfo = paymentService.getPaymentInfo(bookingId);
 
         if (paymentInfo == null || paymentInfo.getUserId() != currentUser.getId()) {
@@ -45,6 +45,7 @@ public class PaymentController extends HttpServlet {
         request.setAttribute("paymentInfo", paymentInfo);
 
         if ("/payment".equals(path)) {
+            // UC07 - 7.1.4: Nếu booking hợp lệ thì hiển thị trang payment.jsp
             request.getRequestDispatcher("/payment.jsp")
                     .forward(request, response);
         } else {
@@ -74,13 +75,18 @@ public class PaymentController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
-
+// UC07 - 7.2.6: Khách hàng chọn phương thức thanh toán tại quầy
+// UC07 - 7.2.7: Gọi service xử lý thanh toán tại quầy
+// UC07 - 7.2.9: Chuyển sang trang kết quả thanh toán
         if ("PAY_AT_COUNTER".equals(method)) {
             paymentService.processPayAtCounter(bookingId);
             response.sendRedirect(request.getContextPath() + "/payment-result?bookingId=" + bookingId);
             return;
         }
-
+// UC07 - 7.1.5: Khách hàng chọn phương thức thanh toán VNPay
+// UC07 - 7.1.6: Controller nhận bookingId và paymentMethod từ form
+// UC07 - 7.1.7: Gọi service tạo URL thanh toán VNPay Sandbox
+// UC07 - 7.1.9: Redirect khách hàng sang cổng thanh toán test
         if ("VNPAY".equals(method)) {
             String paymentUrl = paymentService.createVnpayPaymentUrl(bookingId, request);
             response.sendRedirect(paymentUrl);
@@ -89,7 +95,9 @@ public class PaymentController extends HttpServlet {
 
         response.sendRedirect(request.getContextPath() + "/payment?bookingId=" + bookingId);
     }
+// UC07 - 7.1.10: Nhận callback từ VNPay Sandbox sau khi khách hàng hoàn tất thao tác thanh toán
 
+    // UC07 - 7.1.12: Nếu xử lý callback thành công thì chuyển sang trang kết quả thanh toán
     private void handleVnpayReturn(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 

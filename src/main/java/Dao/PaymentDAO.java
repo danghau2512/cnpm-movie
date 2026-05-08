@@ -48,7 +48,13 @@ public class PaymentDAO {
                         .orElse(null)
         );
     }
+// UC07 - 7.2.8: Lấy tổng tiền của booking để tạo bản ghi thanh toán tại quầy
 
+// UC07 - 7.2.8: Xóa payment cũ của booking nếu đã tồn tại
+
+// UC07 - 7.2.8: Tạo payment mới với phương thức PAY_AT_COUNTER và trạng thái PENDING
+
+    // UC07 - 7.2.8: Cập nhật booking sang PENDING và payment_status = UNPAID
     public void payAtCounter(int bookingId) {
         jdbi.useTransaction(handle -> {
             BigDecimal amount = handle.createQuery("""
@@ -129,6 +135,13 @@ public class PaymentDAO {
                     .execute();
         });
     }
+    // UC07 - 7.1.8: Lấy tổng tiền booking để tạo giao dịch VNPay tạm thời
+
+// UC07 - 7.1.8: Xóa payment cũ nếu booking đã từng tạo giao dịch trước đó
+
+// UC07 - 7.1.8: Tạo payment mới với phương thức VNPAY và trạng thái PENDING
+
+    // UC07 - 7.1.8: Cập nhật booking sang trạng thái PENDING và UNPAID
     public void createVnpayPendingPayment(int bookingId) {
         jdbi.useTransaction(handle -> {
             java.math.BigDecimal amount = handle.createQuery("""
@@ -167,7 +180,9 @@ public class PaymentDAO {
                     .execute();
         });
     }
+// UC07 - 7.1.12: Cập nhật payment sang SUCCESS, lưu mã giao dịch và thời gian thanh toán
 
+    // UC07 - 7.1.12: Cập nhật booking sang CONFIRMED và payment_status = PAID
     public void confirmVnpayPayment(int bookingId, String transactionCode) {
         jdbi.useTransaction(handle -> {
             handle.createUpdate("""
